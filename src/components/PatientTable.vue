@@ -32,7 +32,6 @@ export default {
     },
 
     setup(props) {
-        const width = ref(0)
         const columnDefs = ref([
             { field: 'patient_id', flex: 1},
             { field: 'visit', flex: 1, sortable: true},
