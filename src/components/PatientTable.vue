@@ -42,76 +42,80 @@ export default {
         const iframeElement = document.getElementById("iframe-container");
         
         const fetchZigZag = async () => {
-            document.querySelector("iframe").src = "";
-            const endpoint = "get_zigzag";
-            downloadFiles(endpoint); 
-            iframeElement.removeAttribute("hidden"); 
+            if (visitsSelected.value.length <= 3 && visitsSelected.value.length > 0){
+                document.querySelector("iframe").src = "";
+                const endpoint = "get_zigzag";
+                downloadFiles(endpoint); 
+                iframeElement.removeAttribute("hidden"); 
+            } else {
+                alert("Please select more than 0 but less than 3 entries for ZigZag");
+            }
         };
 
         const fetchPPT = async () => {
-            const endpoint = "get_ppt";
-            downloadFiles(endpoint);
+            if (visitsSelected.value.length <= 3 && visitsSelected.value.length > 0){
+                const endpoint = "get_ppt";
+                downloadFiles(endpoint);
+            } else {
+                alert("Please select more than 0 but less than 3 entries for ZigZag");
+            }
         };
 
         const downloadFiles = async (endpoint) => {
-            if (visitsSelected.value.length <= 3 && visitsSelected.value.length > 0){
 
-                try {
-                    const url = `${host}/${endpoint}`;
+            try {
+                const url = `${host}/${endpoint}`;
 
-                    const data = {
-                        p_id: patientId.value,
-                        visits: visitsSelected.value,
-                    }
-
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            // Add any other headers if needed
-                        },
-                        body: JSON.stringify(data),
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-
-                    const responseData = await response.blob();
-
-                    // To get file name from Content-Disposition
-                    const content_disposition = response.headers.get("Content-Disposition")
-                    var filename = "";
-
-                    if (content_disposition !== undefined){
-                        filename = content_disposition.split('filename=')[1].replace(/['"]+/g, '');
-                    } else{
-                        console.log("Filename not found in the response headers.")
-                    }
-                    // Create a URL for the blob
-                    const download_url = window.URL.createObjectURL(responseData);
-                    
-                    if (endpoint === "get_zigzag"){
-                        document.querySelector("iframe").src = download_url;
-                    } else {
-                        // Create a temporary <a> element
-                        const a = document.createElement('a');
-                        a.href = download_url;
-                        a.download = filename; 
-                        document.body.appendChild(a);
-    
-                        // Initiate the download
-                        a.click();
-                        // Clean up
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(url);
-                    }
-
-                } catch (error) {
-                    console.error('Error fetching zigzag: ', error);
+                const data = {
+                    p_id: patientId.value,
+                    visits: visitsSelected.value,
                 }
-            } else {
-                alert("Please select more than 0 but less than 3 entries for ZigZag");
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add any other headers if needed
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const responseData = await response.blob();
+
+                // To get file name from Content-Disposition
+                const content_disposition = response.headers.get("Content-Disposition")
+                var filename = "";
+
+                if (content_disposition !== undefined){
+                    filename = content_disposition.split('filename=')[1].replace(/['"]+/g, '');
+                } else{
+                    console.log("Filename not found in the response headers.")
+                }
+                // Create a URL for the blob
+                const download_url = window.URL.createObjectURL(responseData);
+                
+                if (endpoint === "get_zigzag"){
+                    document.querySelector("iframe").src = download_url;
+                } else {
+                    // Create a temporary <a> element
+                    const a = document.createElement('a');
+                    a.href = download_url;
+                    a.download = filename; 
+                    document.body.appendChild(a);
+
+                    // Initiate the download
+                    a.click();
+                    // Clean up
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }
+
+            } catch (error) {
+                console.error('Error fetching zigzag: ', error);
             }
             
         }
