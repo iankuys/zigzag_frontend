@@ -35,8 +35,8 @@ export default {
         const width = ref(0)
         const columnDefs = ref([
             { field: 'patient_id', flex: 1},
-            { field: 'visit', flex: 1},
-            { field: 'year', flex: 1}
+            { field: 'visit', flex: 1, sortable: true},
+            { field: 'year', flex: 1, sortable: true}
         ]);
         const gridApi = ref(null);
         const gridColumnApi = ref(null);
@@ -147,26 +147,6 @@ export default {
             });
             visitsSelected.value = selectedRowsArr;
         };
-
-
-        // Old code for resize handling
-        // onMounted(() => {
-        //     width.value = document.getElementById('patient_table').offsetWidth;
-        //     window.addEventListener("resize", resizeHandler);
-            
-        //     columnDefs.value.forEach((column) => {
-        //         column.width = (width.value - 2) / 3; // divide by the number of columns
-        //     });
-
-        // })
-        // const resizeHandler = () => { 
-        //     width.value = document.getElementById('patient_table').offsetWidth;
-            
-        //     console.log(width.value, "windows size changed")
-        //     columnDefs.value.forEach((column) => {
-        //         column.width = (width.value - 2) / 3; // divide by the number of columns
-        //     });
-        // }
 
         return {
             columnDefs,
