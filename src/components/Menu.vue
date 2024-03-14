@@ -43,6 +43,8 @@
             const patientIds = ref([]);
             const visitsArray = ref([]);
             const visits = ref([]);
+            const years = ref([]);
+            const combinedList = ref([]);
             const isLoaded = ref(false);
 
             const host = inject('api_host');
@@ -78,7 +80,10 @@
                             const data = await response.json();
         
                             visits.value = data["visits"];
-                            visitsArray.value = visits.value.map(visit => ({ patient_id: patientSelected, visit }));
+                            years.value = data["years"];
+                            combinedList.value = visits.value.map((value, index) => [value, years.value[index]]); // combine visits and years into one
+
+                            visitsArray.value = combinedList.value.map(visit => ({ patient_id: patientSelected, visit:visit[0], year:visit[1] }));
                             isLoaded.value = true;
                         }
                     }
