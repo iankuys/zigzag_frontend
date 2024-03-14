@@ -1,41 +1,20 @@
-
 <template>
-    <div>
+    <div style="height: 100%">
         <ag-grid-vue
-                style="width: 100%; height: 100%;"
-                class="ag-theme-alpine"
-                :columnDefs="columnDefs"
-                @grid-ready="onGridReady"
-                :defaultColDef="defaultColDef"
-                :rowSelection="rowSelection"
-                :rowMultiSelectWithClick="true"
-                :rowData="rowData">
-        </ag-grid-vue>
-        <!-- <v-table
-        class="table-hover"
-        :data="numVisits"
-        selectionMode="multiple"
-        selectedClass="table-info"
-        @selectionChanged="selectedRows = $event"
+            class="ag-theme-alpine"
+            style="height: 500px"
+            :columnDefs="columnDefs"
+            :rowData="rowData.value"
+            rowSelection="multiple"
+            :rowMultiSelectWithClick="true"
+            animateRows="true"
+            @selection-changed="onSelectionChanged"
+            @grid-ready="onGridReady"
         >
-            <thead slot="head">
-                <th>#</th>
-                <th>Patient ID</th>
-                <th>Visit Number</th>
-            </thead>
-            <tbody slot="body" slot-scope="{displayData}">
-                <tr     
-                v-for="row in displayData"
-                >
-                    <td>{{ row.id }}</td>
-                    <td>{{ row.visit }}</td>
-            </tr>
-            </tbody>
-                
-        </v-table> -->
-
+        </ag-grid-vue>
     </div>
-  </template>
+    <button type="button" class="btn btn-primary">Get Zig Zag</button>
+</template>
   
 <script>
 import { ref, watch } from 'vue';
@@ -43,69 +22,95 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { AgGridVue } from 'ag-grid-vue3';
 
-export default{
-    props:{
-        patientId: Number
+export default {
+    props: {
+        patientId: Number,
     },
-    data() {
-        return {
-            columnDefs: [
-            { field: 'PatientID', maxWidth: 90 },
-            { field: 'Visits', minWidth: 150 },
-            ],
-            gridApi: null,
-            columnApi: null,
-            defaultColDef: {
-                flex: 1,
-                minWidth: 100,
-            },
-            rowSelection: null,
-            rowData: null,
-            numVisits: ref([]),
-            selectedRows: [],
-            visits: []
-        }
-    },
-    created() {
-        this.rowSelection = 'multiple';
-    },
-    watch:{
-        patientId: 'fetchVisits'
-    
-    },
-    methods:{
-        // async fetchVisits(patientId){
-        //     try{
-        //         var url = `http://127.0.0.1:5000/get_visits?`;
-        //         url = url + "patient_id=" + patientId
-        //         const response = await fetch(url);
-        //         const data = await response.json();  
-                
-        //         this.visits = data["visits"]
-        //         for (let i = 0; i < this.visits.length; i++){
-        //             this.numVisits.push({id: patientId, visit: this.visits[i]})
-        //         }  
-        //     } catch (error) {
-        //         console.error('Error fetching visits: ', error)
-        //     }
-        // },
-        async onGridReady(params) {
-            this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
+    setup(props) {
+        const columnDefs = ref([
+            { field: 'id', maxWidth: 90 },
+            { field: 'visit', minWidth: 150 },
+        ]);
+        const gridApi = ref(null);
+        const gridColumnApi = ref(null);
+        const defaultColDef = ref({
+            flex: 1,
+            minWidth: 100,
+        });
+        const rowData = ref({});
+        const numVisits = ref([]);
+        const visits = ref([]);
+        const visitsSelected = ref([]);
 
+        const resetNumVisits = () => {
+            numVisits.value = [];
+        };
+
+        const fetchVisits = async () => {
             try {
-                const response = await fetch(`http://127.0.0.1:5000/get_visits?${patient_id}=${this.patientId}`);
-                const data = await response.json();
-                this.visits = data["visits"]
-                for (let i = 0; i < this.visits.length; i++){
-                    this.numVisits.push({id: patientId, visit: this.visits[i]})
-                }  
-                params.api.setRowData(this.numVisits);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-            }     
-    }
-}
+                resetNumVisits();
 
+                const url = `http://127.0.0.1:5000/get_visits?patient_id=${props.patientId}`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                visits.value = data["visits"];
+                console.log(data['visits'])
+                numVisits.value = visits.value.map(visit => ({ id: props.patientId, visit }));
+                
+                if (gridApi.value) {
+                    gridApi.value.setRowData(numVisits.value)
+                    console.log(numVisits.value)
+                }
+            } catch (error) {
+                console.error('Error fetching visits: ', error);
+            }
+        };
+
+        watch(() => props.patientId, async () => {
+            await fetchVisits();
+        });
+
+        const onGridReady = (params) => {
+            gridApi.value = params.api;
+            gridColumnApi.value = params.columnApi;
+            console.log("hi")
+        };
+
+        const onSelectionChanged = () => {
+            var selectedRows = gridApi.value.getSelectedRows();
+            var selectedRowsArr = [];
+            var maxToShow = 5;
+            selectedRows.forEach(function (selectedRow, index) {
+                if (index >= maxToShow) {
+                return;
+                }
+                selectedRowsArr.push(selectedRow.visit);
+            });
+            visitsSelected.value = selectedRowsArr
+
+            console.log(visitsSelected.value)
+
+        };
+
+        return {
+            columnDefs,
+            gridApi,
+            gridColumnApi,
+            defaultColDef,
+            rowData,
+            numVisits,
+            visitsSelected,
+            onGridReady,
+            onSelectionChanged,
+            deselectRows: () =>{
+                gridApi.value.deselectAll()
+            }
+        };
+    },
+    components: {
+        AgGridVue,
+    },
+};
 </script>
+  

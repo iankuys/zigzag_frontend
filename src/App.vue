@@ -1,18 +1,15 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
 import Menu from './components/Menu.vue';
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+    <img alt="UCI MIND logo" class="logo" src="./assets/UCI16_MIND_Full_ctr_blue copy.png" width="278" height="58"/>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
   </header>
 
   <main>
+    <TheWelcome />
     <Menu></Menu>
   </main>
 </template>
