@@ -2,9 +2,27 @@
         <div class="row">
             <div class="column">
                 <div class="left-column">
-                    <div class="pt-5" id="patient_selector">
-                        <div class="form-group mb-3">
-                            <label class="form-label">Select a patient: </label>
+                    <img alt="UCI MIND logo" class="logo" src="../assets/UCI16_MIND_Full_ctr_blue copy.png" width="417" height="87"/>
+                    <div id="instructions_block">
+                        <b>Enter a Patient ID in the box below, then select 1 to 3 visits per ZigZag</b>
+                        <ul>
+                            <li>
+                                Click on column header to sort by visit number or year
+                            </li>
+                            <li>
+                                <b>Display</b>: Fetches and displays latest ZigZag for the selected Patient ID and visits (<code>.pdf</code>)
+                            </li>
+                            <li>
+                                <b>Download</b>: Downloads the latest ZigZag for the selected Patient ID and visits (Powerpoint <code>.pptm</code>)
+                            </li>
+                            <li>
+                                <b>Clear</b>: Clears all selected visits
+                            </li>
+                        </ul>
+                    </div>  
+                    <div id="patient_selector">
+                        <div class="form-group">
+                            <label class="form-label">Patient ID: </label>
                             <input v-model="patientOption"
                             type="numeric"
                             list="dropdown"
@@ -15,10 +33,12 @@
                             <option v-for="option in patientIds" :value="option">{{ option }}</option>
                         </datalist>
                     </div>
+                    <div id="idnotfound" v-if="visitsArray.length == 0" 
+                        ><i>Patient not found.</i></div>
                     <my-table v-if="visitsArray.length > 0 && isLoaded" 
                         :visitsArr="visitsArray" 
                         ></my-table>
-                </div>    
+                </div>  
             </div>
             <div class="column">    
                 <div class="right-column">                    

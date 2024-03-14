@@ -13,8 +13,8 @@
         @grid-ready="onGridReady">
         </ag-grid-vue>
         <div id="button_container">
-            <button type="button" class="btn btn-primary float-left" @click="fetchZigZag">Display</button>
-            <button type="button" class="btn btn-primary float-right" @click="fetchPPT">Download</button>
+            <button type="button" class="btn btn-primary float-left btn-success" @click="fetchZigZag">Display</button>
+            <button type="button" class="btn btn-primary float-right btn-success" @click="fetchPPT">Download</button>
             <button type="button" class="btn btn-primary float-right" @click="deselectRows">Clear</button>
         </div>  
     </div>

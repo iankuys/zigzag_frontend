@@ -43,6 +43,11 @@
 
 #patient_selector{
   margin-bottom: 1%;
+  margin-top: 0%;
+}
+
+#patient_selector .form-group {
+  margin-bottom: 1%;
 }
 
 .form-group>input.p_input {
@@ -59,6 +64,17 @@
 
 #table_container {
   display: flex;
+}
+
+
+.logo {
+  left:0;
+  top:0;
+  margin-bottom: 1%;
+}
+
+#idnotfound {
+  text-align: center;
 }
 
 @media (width <= 850px) {

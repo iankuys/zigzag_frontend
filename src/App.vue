@@ -7,13 +7,10 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 <template>
   <header>
-    <img alt="UCI MIND logo" class="logo" src="./assets/UCI16_MIND_Full_ctr_blue copy.png" width="417" height="87"/>
   </header>
-
   <main>
     <Menu></Menu>
   </main>
-
 </template>
 
 <style scoped>
@@ -23,21 +20,12 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
   align-items: center;
 }
 
-header .logo {
-  position: inline;
-  left:0;
-  top:0;
-  margin-bottom: 1%;
-}
-
 main {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: calc(100vh - 100px); /** Full height hack */
 }
-
 
 @media (min-width: 1024px) {
   header {
