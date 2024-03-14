@@ -7,6 +7,13 @@
   width: 100%;
 }
 
+#iframe-container {
+  background:url(../assets/spinner.gif) center center no-repeat;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
 .column {
   display: flex;
   flex-direction: column;
@@ -30,10 +37,15 @@
   height: 100%;
 }
 
+#patient_selector{
+  margin-bottom: 1%;
+}
+
 #button_container {
   display: flex;
   justify-content: space-around;
   width: 100%;
+  margin-top: 0.5%;
 }
 
 #table_container {

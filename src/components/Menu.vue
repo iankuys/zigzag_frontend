@@ -4,19 +4,27 @@
                 <div class="left-column">
                     <div class="pt-5" id="patient_selector">
                         <label for="dropdown">Select a patient: </label>
-                        <select class="mx-2" id="dropdown" v-model="patientOption">
+                        <input v-model="patientOption"
+                        list="patientIds"
+                        class="form-control" />
+                        <datalist class="mx-2" id="dropdown">
                             <option v-for="option in patientIds" :value="option">{{ option }}</option>
-                        </select>
+                        </datalist>
                     </div>
-                    <my-table v-if="visitsArray.length > 0 && isLoaded" :visitsArr="visitsArray"></my-table>
+                    <my-table v-if="visitsArray.length > 0 && isLoaded" 
+                        @showSpinner="setSpinner"
+                        :visitsArr="visitsArray" 
+                        ></my-table>
                 </div>    
             </div>
-            <div class="column">
-                <div class="right-column">
-                    <iframe type="application/pdf" 
-                    src= "" 
-                    id="pdf-embed" > 
-                    </iframe>
+            <div class="column">    
+                <div class="right-column">                    
+                    <div id="iframe-container" hidden>
+                        <iframe type="application/pdf" 
+                        src= "" 
+                        id="pdf-embed" > 
+                        </iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -33,6 +41,8 @@
             const visitsArray = ref([]);
             const visits = ref([]);
             const isLoaded = ref(false);
+            const isSpinner = ref(undefined);
+
             const host = inject('api_host');
 
             const fetchPatients = async () => {
@@ -80,8 +90,9 @@
                 patientIds,
                 visitsArray,
                 isLoaded,
+                isSpinner,
                 fetchVisits,
-                fetchPatients
+                fetchPatients,
             };
         },
         components: {

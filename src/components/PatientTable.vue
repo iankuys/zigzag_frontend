@@ -5,14 +5,14 @@
             @selection-changed="onSelectionChanged" @grid-ready="onGridReady">
         </ag-grid-vue>
         <div id="button_container">
-            <button type="button" class="btn btn-primary float-left" @click="fetchZigZag">Get Zig Zag</button>
-            <button type="button" class="btn btn-primary float-right" @click="fetchPPT">Get PPT</button>
+            <button type="button" class="btn btn-primary float-left" @click="fetchZigZag">Display</button>
+            <button type="button" class="btn btn-primary float-right" @click="fetchPPT">Download</button>
         </div>  
     </div>
 </template>
   
 <script>
-import { ref, inject, onMounted } from 'vue';
+import { ref, inject, onMounted, defineEmits } from 'vue';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -21,6 +21,7 @@ export default {
     props: {
         visitsArr: Array,
     },
+
     setup(props) {
         const width = ref(0)
         const columnDefs = ref([
@@ -37,10 +38,13 @@ export default {
         const rowData = ref({});
         const visitsSelected = ref([]);
         const host = inject('api_host')
+        const iframeElement = document.getElementById("iframe-container");
         
         const fetchZigZag = async () => {
+            document.querySelector("iframe").src = "";
             const endpoint = "get_zigzag";
-            downloadFiles(endpoint);
+            downloadFiles(endpoint); 
+            iframeElement.removeAttribute("hidden"); 
         };
 
         const fetchPPT = async () => {
@@ -88,7 +92,6 @@ export default {
                     
                     if (endpoint === "get_zigzag"){
                         document.querySelector("iframe").src = download_url;
-                        
                     } else {
                         // Create a temporary <a> element
                         const a = document.createElement('a');
@@ -111,6 +114,10 @@ export default {
             }
             
         }
+
+        // const updateIFrame = (url_name) => {
+        //     document.querySelector("iframe").src = url_name;
+        // }
 
         const onGridReady = (params) => {
             gridApi.value = params.api;
