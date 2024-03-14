@@ -27,6 +27,7 @@ export default {
         const columnDefs = ref([
             { field: 'patient_id'},
             { field: 'visit' },
+            { field: 'year'}
         ]);
         const gridApi = ref(null);
         const gridColumnApi = ref(null);
@@ -131,7 +132,7 @@ export default {
             window.addEventListener("resize", resizeHandler);
             
             columnDefs.value.forEach((column) => {
-                column.width = (width.value - 2) / 2;
+                column.width = (width.value - 2) / 3; // divide by the number of columns
             });
 
         })
@@ -157,7 +158,7 @@ export default {
             
             console.log(width.value, "windows size changed")
             columnDefs.value.forEach((column) => {
-                column.width = (width.value - 2) / 2;
+                column.width = (width.value - 2) / 3; // divide by the number of columns
             });
         }
 
