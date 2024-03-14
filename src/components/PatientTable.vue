@@ -43,12 +43,10 @@ export default {
                     const url = `${host}/get_zigzag`;
     
                     const data = {
-                        patient_id: patientId.value,
+                        p_id: patientId.value,
                         visits: visitsSelected.value,
                     }
     
-                    console.log(data);
-                    console.log(url);
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: {
@@ -57,25 +55,33 @@ export default {
                         },
                         body: JSON.stringify(data),
                     });
-    
+
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
-    
-                    const responseData = await response.blob();
 
+                    const responseData = await response.blob();
+                    const content_disposition = response.headers.get("Content-Disposition")
+                    var filename = "";
+
+                    if (content_disposition !== undefined){
+                        filename = content_disposition.split('filename=')[1].replace(/['"]+/g, '');
+                        console.log("Filename:", filename)
+                        console.log(typeof(filename))
+                    } else{
+                        console.log("Filename not found in the response headers.")
+                    }
                     // Create a URL for the blob
                     const download_url = window.URL.createObjectURL(responseData);
 
                     // Create a temporary <a> element
                     const a = document.createElement('a');
                     a.href = download_url;
-                    a.download = `${patientId.value}.ppt`;  // Update with your desired file name
+                    a.download = filename; 
                     document.body.appendChild(a);
 
                     // Initiate the download
                     a.click();
-
                     // Clean up
                     document.body.removeChild(a);
                     window.URL.revokeObjectURL(url);

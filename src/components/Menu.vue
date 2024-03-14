@@ -44,7 +44,7 @@ export default {
             try {
                 resetVisits();
 
-                const url = `${host}/get_visits?patient_id=${patientSelected.value}`;
+                const url = `${host}/get_visits?p_id=${patientSelected.value}`;
                 const response = await fetch(url);
                 const data = await response.json();
 
