@@ -1,44 +1,77 @@
 <template>
-  <div>
-    <label for="dropdown">Select a patient:</label>
-    <select id="dropdown" v-model="patientOption">
-      <option v-for="option in patientIds" :value="option">{{ option }}</option>
-    </select>
-  </div>
-  <div v-if="patientOption != ''">
-      <my-table :patientId="patientOption"></my-table>
-  </div>
-</template>
+    <div>
+        <label for="dropdown">Select a patient: </label>
+        <select class="mx-2" id="dropdown" v-model="patientOption">
+            <option v-for="option in patientIds" :value="option">{{ option }}</option>
+        </select>
+    </div>
 
+    <my-table v-if="visitsArray.length > 0 && isLoaded" :visitsArr="visitsArray"></my-table>
+</template>
+  
 <script>
+import { ref, onMounted, watch} from 'vue';
 import PatientTable from './PatientTable.vue';
 
-export default{
-    data() {
-        return {
-            patientOption: '',
-            patientIds: []
-        }
-    },
-    async created(){
-        await this.fetchPatients();
-    },
-    methods:{
-        async fetchPatients(){
-            try{
+export default {
+    setup() {
+        const patientSelected = ref('');
+        const patientIds = ref([]);
+        const visitsArray = ref([]);
+        const visits = ref([]);
+        const isLoaded = ref(false);
+
+        const fetchPatients = async () => {
+            try {
                 const url = `http://127.0.0.1:5000/get_patients`;
                 const response = await fetch(url);
-                const data = await response.json();  
-                this.patientIds = data["patients"];          
+                const data = await response.json();
+                patientIds.value = data["patients"];
             } catch (error) {
-                console.error('Error fetching patients: ', error)
+                console.error('Error fetching patients: ', error);
             }
-        },
-    },
-    components:{
-        'my-table': PatientTable, 
-    }
-        
-}
+        };
 
+        const resetVisits = () => {
+            visitsArray.value = [];
+            isLoaded.value = false;
+
+        };
+
+        const fetchVisits = async () => {
+            try {
+                resetVisits();
+
+                const url = `http://127.0.0.1:5000/get_visits?patient_id=${patientSelected.value}`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                visits.value = data["visits"];
+                visitsArray.value = visits.value.map(visit => ({ patient_id: patientSelected, visit }));
+                isLoaded.value = true;
+
+            } catch (error) {
+                console.error('Error fetching visits: ', error);
+            }
+        };
+        
+        onMounted(fetchPatients);
+
+        watch(patientSelected, async () => {
+            await fetchVisits();
+        });
+
+        return {
+            patientOption: patientSelected,
+            patientIds,
+            visitsArray,
+            isLoaded,
+            fetchVisits,
+            fetchPatients
+        };
+    },
+    components: {
+        'my-table': PatientTable,
+    },
+};
 </script>
