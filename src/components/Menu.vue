@@ -6,8 +6,9 @@
                         <div class="form-group mb-3">
                             <label class="form-label">Select a patient: </label>
                             <input v-model="patientOption"
+                            type="numeric"
                             list="dropdown"
-                            class="form-control p_input" 
+                            class="form-control-sm p_input" 
                             />
                         </div>
                         <datalist class="mx-2" id="dropdown">
@@ -66,16 +67,20 @@
             const fetchVisits = async () => {
                 try {
                     resetVisits();
+                    
+                    // check if string is a number
+                    if (/^[0-9]*$/.test(patientSelected.value) && patientSelected.value !== ""){
 
-                    const url = `${host}/get_visits?p_id=${patientSelected.value}`;
-                    const response = await fetch(url);
-
-                    if (response.status === 200){
-                        const data = await response.json();
+                        const url = `${host}/get_visits?p_id=${patientSelected.value}`;
+                        const response = await fetch(url);
     
-                        visits.value = data["visits"];
-                        visitsArray.value = visits.value.map(visit => ({ patient_id: patientSelected, visit }));
-                        isLoaded.value = true;
+                        if (response.status === 200){
+                            const data = await response.json();
+        
+                            visits.value = data["visits"];
+                            visitsArray.value = visits.value.map(visit => ({ patient_id: patientSelected, visit }));
+                            isLoaded.value = true;
+                        }
                     }
 
                 } catch (error) {
