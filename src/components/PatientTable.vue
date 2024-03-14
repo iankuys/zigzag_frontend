@@ -1,11 +1,14 @@
 <template>
-    <div style="width: 30%">
+    <div>
         <ag-grid-vue id="patient_table" class="ag-theme-alpine"  style="height: 500px; width: 100%" :columnDefs="columnDefs" :rowData="rowData.value"
             rowSelection="multiple" :rowMultiSelectWithClick="true" animateRows="true"
             @selection-changed="onSelectionChanged" @grid-ready="onGridReady">
         </ag-grid-vue>
+        <div id="button_container">
+            <button type="button" class="btn btn-primary float-left" @click="fetchZigZag">Get Zig Zag</button>
+            <button type="button" class="btn btn-primary float-right" @click="fetchPPT">Get PPT</button>
+        </div>  
     </div>
-    <button type="button" class="btn btn-primary" @click="fetchZigZag">Get Zig Zag</button>
 </template>
   
 <script>
@@ -33,20 +36,29 @@ export default {
         const patientId = ref("")
         const rowData = ref({});
         const visitsSelected = ref([]);
-        const host = inject('api_host');
-
+        const host = inject('api_host')
+        
         const fetchZigZag = async () => {
+            const endpoint = "get_zigzag";
+            downloadFiles(endpoint);
+        };
 
-            if (visitsSelected.value.length <= 3){
+        const fetchPPT = async () => {
+            const endpoint = "get_ppt";
+            downloadFiles(endpoint);
+        };
+
+        const downloadFiles = async (endpoint) => {
+            if (visitsSelected.value.length <= 3 && visitsSelected.value.length > 0){
 
                 try {
-                    const url = `${host}/get_zigzag`;
-    
+                    const url = `${host}/${endpoint}`;
+
                     const data = {
                         p_id: patientId.value,
                         visits: visitsSelected.value,
                     }
-    
+
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: {
@@ -61,46 +73,50 @@ export default {
                     }
 
                     const responseData = await response.blob();
+
+                    // To get file name from Content-Disposition
                     const content_disposition = response.headers.get("Content-Disposition")
                     var filename = "";
 
                     if (content_disposition !== undefined){
                         filename = content_disposition.split('filename=')[1].replace(/['"]+/g, '');
-                        console.log("Filename:", filename)
-                        console.log(typeof(filename))
                     } else{
                         console.log("Filename not found in the response headers.")
                     }
                     // Create a URL for the blob
                     const download_url = window.URL.createObjectURL(responseData);
-
-                    // Create a temporary <a> element
-                    const a = document.createElement('a');
-                    a.href = download_url;
-                    a.download = filename; 
-                    document.body.appendChild(a);
-
-                    // Initiate the download
-                    a.click();
-                    // Clean up
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
+                    
+                    if (endpoint === "get_zigzag"){
+                        document.querySelector("iframe").src = download_url;
+                        
+                    } else {
+                        // Create a temporary <a> element
+                        const a = document.createElement('a');
+                        a.href = download_url;
+                        a.download = filename; 
+                        document.body.appendChild(a);
     
+                        // Initiate the download
+                        a.click();
+                        // Clean up
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }
+
                 } catch (error) {
                     console.error('Error fetching zigzag: ', error);
                 }
             } else {
-                alert("Please select less than 3 entries for ZigZag")
+                alert("Please select more than 0 but less than 3 entries for ZigZag");
             }
-        };
+            
+        }
 
         const onGridReady = (params) => {
             gridApi.value = params.api;
             gridColumnApi.value = params.columnApi;
             patientId.value = props.visitsArr[0].patient_id;
             gridApi.value.setRowData(props.visitsArr);
-
-            console.log(patientId.value)
         };
 
         onMounted(() => {
@@ -122,14 +138,11 @@ export default {
                 if (visitsSelected.value.length >= maxToZigZag && !visitsSelected.value.includes(selectedNode.data.visit)) {
                     selectedNode.setSelected(false);
                 } else {
-                    console.log(selectedNode);
                     selectedRowsArr.push(selectedNode.data.visit);
                 }
                 
             });
             visitsSelected.value = selectedRowsArr;
-
-            console.log(visitsSelected.value);
         };
 
         const resizeHandler = () => { 
@@ -140,7 +153,6 @@ export default {
                 column.width = (width.value - 2) / 2;
             });
         }
-
 
         return {
             columnDefs,
@@ -155,6 +167,7 @@ export default {
                 gridApi.value.deselectAll()
             },
             fetchZigZag,
+            fetchPPT,
             resizeHandler
         };
     },

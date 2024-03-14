@@ -8,7 +8,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 <template>
   <header>
     <img alt="UCI MIND logo" class="logo" src="./assets/UCI16_MIND_Full_ctr_blue copy.png" width="417" height="87"/>
-
   </header>
 
   <main>
@@ -25,9 +24,10 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 }
 
 header .logo {
-  position: fixed;
+  position: inline;
   left:0;
   top:0;
+  margin-bottom: 1%;
 }
 
 main {
