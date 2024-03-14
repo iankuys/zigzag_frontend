@@ -7,6 +7,7 @@
         <div id="button_container">
             <button type="button" class="btn btn-primary float-left" @click="fetchZigZag">Display</button>
             <button type="button" class="btn btn-primary float-right" @click="fetchPPT">Download</button>
+            <button type="button" class="btn btn-primary float-right" @click="deselectRows">Clear</button>
         </div>  
     </div>
 </template>
@@ -119,10 +120,6 @@ export default {
             }
             
         }
-
-        // const updateIFrame = (url_name) => {
-        //     document.querySelector("iframe").src = url_name;
-        // }
 
         const onGridReady = (params) => {
             gridApi.value = params.api;
