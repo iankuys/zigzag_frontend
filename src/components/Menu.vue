@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="pt-5">
         <label for="dropdown">Select a patient: </label>
         <select class="mx-2" id="dropdown" v-model="patientOption">
             <option v-for="option in patientIds" :value="option">{{ option }}</option>
@@ -10,7 +10,7 @@
 </template>
   
 <script>
-import { ref, onMounted, watch} from 'vue';
+import { inject, ref, onMounted, watch} from 'vue';
 import PatientTable from './PatientTable.vue';
 
 export default {
@@ -20,10 +20,12 @@ export default {
         const visitsArray = ref([]);
         const visits = ref([]);
         const isLoaded = ref(false);
+        const host = inject('api_host');
 
         const fetchPatients = async () => {
             try {
-                const url = `http://127.0.0.1:5000/get_patients`;
+                const url = `${host}/get_patients`;
+                console.log(url);
                 const response = await fetch(url);
                 const data = await response.json();
                 patientIds.value = data["patients"];
@@ -42,7 +44,7 @@ export default {
             try {
                 resetVisits();
 
-                const url = `http://127.0.0.1:5000/get_visits?patient_id=${patientSelected.value}`;
+                const url = `${host}/get_visits?patient_id=${patientSelected.value}`;
                 const response = await fetch(url);
                 const data = await response.json();
 

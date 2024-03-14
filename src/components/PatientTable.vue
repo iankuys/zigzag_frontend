@@ -1,5 +1,5 @@
 <template>
-    <div style="height: 100%; width: 30%">
+    <div style="width: 30%">
         <ag-grid-vue id="patient_table" class="ag-theme-alpine"  style="height: 500px; width: 100%" :columnDefs="columnDefs" :rowData="rowData.value"
             rowSelection="multiple" :rowMultiSelectWithClick="true" animateRows="true"
             @selection-changed="onSelectionChanged" @grid-ready="onGridReady">
@@ -9,7 +9,7 @@
 </template>
   
 <script>
-import { ref, watch, onMounted } from 'vue';
+import { ref, inject, onMounted } from 'vue';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -33,20 +33,22 @@ export default {
         const patientId = ref("")
         const rowData = ref({});
         const visitsSelected = ref([]);
+        const host = inject('api_host');
 
         const fetchZigZag = async () => {
 
             if (visitsSelected.value.length <= 3){
 
                 try {
-                    const url = `http://127.0.0.1:5000/get_zigzag`;
+                    const url = `${host}/get_zigzag`;
     
                     const data = {
                         patient_id: patientId.value,
                         visits: visitsSelected.value,
                     }
     
-                    console.log(data)
+                    console.log(data);
+                    console.log(url);
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: {
@@ -82,6 +84,7 @@ export default {
 
         onMounted(() => {
             width.value = document.getElementById('patient_table').offsetWidth;
+            window.addEventListener("resize", resizeHandler);
             
             columnDefs.value.forEach((column) => {
                 column.width = (width.value - 2) / 2;
@@ -108,6 +111,15 @@ export default {
             console.log(visitsSelected.value)
         };
 
+        const resizeHandler = () => { 
+            width.value = document.getElementById('patient_table').offsetWidth;
+            
+            console.log("windows size changed")
+            columnDefs.value.forEach((column) => {
+                column.width = (width.value - 2) / 2;
+            });
+        }
+
 
         return {
             columnDefs,
@@ -121,7 +133,8 @@ export default {
             deselectRows: () => {
                 gridApi.value.deselectAll()
             },
-            fetchZigZag
+            fetchZigZag,
+            resizeHandler
         };
     },
     components: {
