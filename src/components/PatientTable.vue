@@ -1,6 +1,6 @@
 <template>
-    <div style="height: 100%">
-        <ag-grid-vue class="ag-theme-alpine"  style="height: 500px; width: 100%;" :columnDefs="columnDefs" :rowData="rowData.value"
+    <div style="height: 100%; width: 30%">
+        <ag-grid-vue id="patient_table" class="ag-theme-alpine"  style="height: 500px; width: 100%" :columnDefs="columnDefs" :rowData="rowData.value"
             rowSelection="multiple" :rowMultiSelectWithClick="true" animateRows="true"
             @selection-changed="onSelectionChanged" @grid-ready="onGridReady">
         </ag-grid-vue>
@@ -19,9 +19,10 @@ export default {
         visitsArr: Array,
     },
     setup(props) {
+        const width = ref(0)
         const columnDefs = ref([
-            { field: 'patient_id', maxWidth: 193 },
-            { field: 'visit', maxWidth: 193 },
+            { field: 'patient_id'},
+            { field: 'visit' },
         ]);
         const gridApi = ref(null);
         const gridColumnApi = ref(null);
@@ -29,7 +30,7 @@ export default {
             flex: 1,
             minWidth: 100,
         });
-        const patient_id = ref("")
+        const patientId = ref("")
         const rowData = ref({});
         const visitsSelected = ref([]);
 
@@ -41,10 +42,11 @@ export default {
                     const url = `http://127.0.0.1:5000/get_zigzag`;
     
                     const data = {
-                        patient_id: patient_id.value,
+                        patient_id: patientId.value,
                         visits: visitsSelected.value,
                     }
     
+                    console.log(data)
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: {
@@ -54,7 +56,6 @@ export default {
                         body: JSON.stringify(data),
                     });
     
-                    console.log(url)
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
@@ -73,17 +74,27 @@ export default {
         const onGridReady = (params) => {
             gridApi.value = params.api;
             gridColumnApi.value = params.columnApi;
-            patient_id.value = props.visitsArr[0].id;
+            patientId.value = props.visitsArr[0].patient_id;
             gridApi.value.setRowData(props.visitsArr);
-            console.log("hi")
+
+            console.log(patientId.value)
         };
+
+        onMounted(() => {
+            width.value = document.getElementById('patient_table').offsetWidth;
+            
+            columnDefs.value.forEach((column) => {
+                column.width = (width.value - 2) / 2;
+            });
+
+        })
 
         const onSelectionChanged = () => {
 
             var selectedNodes = gridApi.value.getSelectedNodes();
             var selectedRowsArr = [];
             var maxToZigZag = 3;
-            selectedNodes.forEach(function (selectedNode, index) {
+            selectedNodes.forEach(function (selectedNode) {
                 if (visitsSelected.value.length >= maxToZigZag && !visitsSelected.value.includes(selectedNode.data.visit)) {
                     selectedNode.setSelected(false);
                 } else {
@@ -96,6 +107,7 @@ export default {
 
             console.log(visitsSelected.value)
         };
+
 
         return {
             columnDefs,

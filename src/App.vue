@@ -6,13 +6,14 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 <template>
   <header>
-    <img alt="UCI MIND logo" class="logo" src="./assets/UCI16_MIND_Full_ctr_blue copy.png" width="278" height="58"/>
+    <img alt="UCI MIND logo" class="logo" src="./assets/UCI16_MIND_Full_ctr_blue copy.png" width="278" height="58" style="float:right;"/>
 
   </header>
 
   <main>
     <Menu></Menu>
   </main>
+
 </template>
 
 <style scoped>
@@ -22,30 +23,24 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
   align-items: center;
 }
 
-header {
-  line-height: 1.5;
+header .logo {
+  position: fixed;
+  left:0;
+  top:0;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
+
 
 @media (min-width: 1024px) {
   header {
     display: flex;
     place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
   }
 }
 </style>
