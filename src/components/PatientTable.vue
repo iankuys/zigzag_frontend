@@ -13,7 +13,7 @@
         >
         </ag-grid-vue>
     </div>
-    <button type="button" class="btn btn-primary">Get Zig Zag</button>
+    <button type="button" class="btn btn-primary" @click="fetchZigZag">Get Zig Zag</button>
 </template>
   
 <script>
@@ -67,6 +67,51 @@ export default {
             }
         };
 
+        const convertVisitsToUrl = () => {
+            let url = '';
+            for (let i = 0; i < visitsSelected.value.length; i++ ){
+                if (i == 0){
+                    url += `v=${visitsSelected.value[i]}`;
+
+                }else{
+                    url += `&v=${visitsSelected.value[i]}`;
+                }
+            }
+            return url;
+        }
+
+        const fetchZigZag = async () => {
+            try {
+                const url = `http://127.0.0.1:5000/get_zigzag`;
+
+                const data = {
+                    patient_id: props.patientId,
+                    visits: visitsSelected.value,
+                }
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add any other headers if needed
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                console.log(url)
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const responseData = await response.json();
+                console.log(responseData);
+
+            } catch (error) {
+                console.error('Error fetching zigzag: ', error);
+            }
+        };
+
+
         watch(() => props.patientId, async () => {
             await fetchVisits();
         });
@@ -105,7 +150,8 @@ export default {
             onSelectionChanged,
             deselectRows: () =>{
                 gridApi.value.deselectAll()
-            }
+            },
+            fetchZigZag
         };
     },
     components: {
