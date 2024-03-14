@@ -1,8 +1,16 @@
 <template>
     <div>
-        <ag-grid-vue id="patient_table" class="ag-theme-alpine"  style="height: 500px; width: 100%" :columnDefs="columnDefs" :rowData="rowData.value"
-            rowSelection="multiple" :rowMultiSelectWithClick="true" animateRows="true"
-            @selection-changed="onSelectionChanged" @grid-ready="onGridReady">
+        <ag-grid-vue 
+        id="patient_table" 
+        class="ag-theme-alpine"  
+        style="height: 500px; width: 100%" 
+        :columnDefs="columnDefs" 
+        :rowData="rowData.value"
+        rowSelection="multiple" 
+        :rowMultiSelectWithClick="true" 
+        animateRows="true"
+        @selection-changed="onSelectionChanged" 
+        @grid-ready="onGridReady">
         </ag-grid-vue>
         <div id="button_container">
             <button type="button" class="btn btn-primary float-left" @click="fetchZigZag">Display</button>
@@ -13,7 +21,7 @@
 </template>
   
 <script>
-import { ref, inject, onMounted, defineEmits } from 'vue';
+import { ref, inject } from 'vue';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -26,16 +34,12 @@ export default {
     setup(props) {
         const width = ref(0)
         const columnDefs = ref([
-            { field: 'patient_id'},
-            { field: 'visit' },
-            { field: 'year'}
+            { field: 'patient_id', flex: 1},
+            { field: 'visit', flex: 1},
+            { field: 'year', flex: 1}
         ]);
         const gridApi = ref(null);
         const gridColumnApi = ref(null);
-        const defaultColDef = ref({
-            flex: 1,
-            minWidth: 100,
-        });
         const patientId = ref("")
         const rowData = ref({});
         const visitsSelected = ref([]);
@@ -128,16 +132,6 @@ export default {
             gridApi.value.setRowData(props.visitsArr);
         };
 
-        onMounted(() => {
-            width.value = document.getElementById('patient_table').offsetWidth;
-            window.addEventListener("resize", resizeHandler);
-            
-            columnDefs.value.forEach((column) => {
-                column.width = (width.value - 2) / 3; // divide by the number of columns
-            });
-
-        })
-
         const onSelectionChanged = () => {
 
             var selectedNodes = gridApi.value.getSelectedNodes();
@@ -154,20 +148,30 @@ export default {
             visitsSelected.value = selectedRowsArr;
         };
 
-        const resizeHandler = () => { 
-            width.value = document.getElementById('patient_table').offsetWidth;
+
+        // Old code for resize handling
+        // onMounted(() => {
+        //     width.value = document.getElementById('patient_table').offsetWidth;
+        //     window.addEventListener("resize", resizeHandler);
             
-            console.log(width.value, "windows size changed")
-            columnDefs.value.forEach((column) => {
-                column.width = (width.value - 2) / 3; // divide by the number of columns
-            });
-        }
+        //     columnDefs.value.forEach((column) => {
+        //         column.width = (width.value - 2) / 3; // divide by the number of columns
+        //     });
+
+        // })
+        // const resizeHandler = () => { 
+        //     width.value = document.getElementById('patient_table').offsetWidth;
+            
+        //     console.log(width.value, "windows size changed")
+        //     columnDefs.value.forEach((column) => {
+        //         column.width = (width.value - 2) / 3; // divide by the number of columns
+        //     });
+        // }
 
         return {
             columnDefs,
             gridApi,
             gridColumnApi,
-            defaultColDef,
             rowData,
             visitsSelected,
             onGridReady,
@@ -176,8 +180,7 @@ export default {
                 gridApi.value.deselectAll()
             },
             fetchZigZag,
-            fetchPPT,
-            resizeHandler
+            fetchPPT
         };
     },
     components: {
