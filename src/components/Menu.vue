@@ -5,7 +5,7 @@
                     <div class="pt-5" id="patient_selector">
                         <label for="dropdown">Select a patient: </label>
                         <input v-model="patientOption"
-                        list="patientIds"
+                        list="dropdown"
                         class="form-control" />
                         <datalist class="mx-2" id="dropdown">
                             <option v-for="option in patientIds" :value="option">{{ option }}</option>
