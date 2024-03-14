@@ -2,11 +2,12 @@
 import Menu from './components/Menu.vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+
 </script>
 
 <template>
   <header>
-    <img alt="UCI MIND logo" class="logo" src="./assets/UCI16_MIND_Full_ctr_blue copy.png" width="278" height="58" style="float:right;"/>
+    <img alt="UCI MIND logo" class="logo" src="./assets/UCI16_MIND_Full_ctr_blue copy.png" width="417" height="87"/>
 
   </header>
 
@@ -34,6 +35,7 @@ main {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  height: calc(100vh - 100px); /** Full height hack */
 }
 
 
