@@ -3,16 +3,18 @@
             <div class="column">
                 <div class="left-column">
                     <div class="pt-5" id="patient_selector">
-                        <label for="dropdown">Select a patient: </label>
-                        <input v-model="patientOption"
-                        list="dropdown"
-                        class="form-control" />
+                        <div class="form-group mb-3">
+                            <label class="form-label">Select a patient: </label>
+                            <input v-model="patientOption"
+                            list="dropdown"
+                            class="form-control p_input" 
+                            />
+                        </div>
                         <datalist class="mx-2" id="dropdown">
                             <option v-for="option in patientIds" :value="option">{{ option }}</option>
                         </datalist>
                     </div>
                     <my-table v-if="visitsArray.length > 0 && isLoaded" 
-                        @showSpinner="setSpinner"
                         :visitsArr="visitsArray" 
                         ></my-table>
                 </div>    
@@ -41,7 +43,6 @@
             const visitsArray = ref([]);
             const visits = ref([]);
             const isLoaded = ref(false);
-            const isSpinner = ref(undefined);
 
             const host = inject('api_host');
 
@@ -68,11 +69,14 @@
 
                     const url = `${host}/get_visits?p_id=${patientSelected.value}`;
                     const response = await fetch(url);
-                    const data = await response.json();
 
-                    visits.value = data["visits"];
-                    visitsArray.value = visits.value.map(visit => ({ patient_id: patientSelected, visit }));
-                    isLoaded.value = true;
+                    if (response.status === 200){
+                        const data = await response.json();
+    
+                        visits.value = data["visits"];
+                        visitsArray.value = visits.value.map(visit => ({ patient_id: patientSelected, visit }));
+                        isLoaded.value = true;
+                    }
 
                 } catch (error) {
                     console.error('Error fetching visits: ', error);
@@ -90,9 +94,8 @@
                 patientIds,
                 visitsArray,
                 isLoaded,
-                isSpinner,
                 fetchVisits,
-                fetchPatients,
+                fetchPatients
             };
         },
         components: {

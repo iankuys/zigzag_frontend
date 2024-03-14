@@ -41,6 +41,11 @@
   margin-bottom: 1%;
 }
 
+.form-group>input.p_input {
+  flex-grow: 0;
+  flex-basis: 100px;
+}
+
 #button_container {
   display: flex;
   justify-content: space-around;
@@ -50,5 +55,11 @@
 
 #table_container {
   display: flex;
+}
 
+@media (width <= 591px) {
+  .logo {
+    width: 47vw;
+    height: 58px;
+  }
 }

@@ -155,7 +155,7 @@ export default {
         const resizeHandler = () => { 
             width.value = document.getElementById('patient_table').offsetWidth;
             
-            console.log("windows size changed")
+            console.log(width.value, "windows size changed")
             columnDefs.value.forEach((column) => {
                 column.width = (width.value - 2) / 2;
             });
