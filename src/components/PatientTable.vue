@@ -35,7 +35,7 @@ export default {
         const visitsSelected = ref([]);
         const host = inject('api_host');
 
-        const fetchZigZag = async () => {
+        const fetchPPT = async () => {
 
             if (visitsSelected.value.length <= 3){
 
@@ -87,6 +87,59 @@ export default {
                 alert("Please select less than 3 entries for ZigZag")
             }
         };
+
+        const fetchZigZag = async () => {
+
+            if (visitsSelected.value.length <= 3){
+
+                try {
+                    const url = `${host}/get_zigzag`;
+
+                    const data = {
+                        patient_id: patientId.value,
+                        visits: visitsSelected.value,
+                    }
+
+                    console.log(data);
+                    console.log(url);
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // Add any other headers if needed
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+
+                    const responseData = await response.blob();
+
+                    // Create a URL for the blob
+                    const download_url = window.URL.createObjectURL(responseData);
+
+                    // Create a temporary <a> element
+                    const a = document.createElement('a');
+                    a.href = download_url;
+                    a.download = `${patientId.value}.ppt`;  // Update with your desired file name
+                    document.body.appendChild(a);
+
+                    // Initiate the download
+                    a.click();
+
+                    // Clean up
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+
+                } catch (error) {
+                    console.error('Error fetching zigzag: ', error);
+                }
+            } else {
+                alert("Please select less than 3 entries for ZigZag")
+            }
+            };
 
         const onGridReady = (params) => {
             gridApi.value = params.api;
@@ -149,6 +202,7 @@ export default {
                 gridApi.value.deselectAll()
             },
             fetchZigZag,
+            fetchPPT,
             resizeHandler
         };
     },
