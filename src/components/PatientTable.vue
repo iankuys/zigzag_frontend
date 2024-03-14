@@ -62,8 +62,23 @@ export default {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
     
-                    const responseData = await response.json();
-                    console.log(responseData);
+                    const responseData = await response.blob();
+
+                    // Create a URL for the blob
+                    const download_url = window.URL.createObjectURL(responseData);
+
+                    // Create a temporary <a> element
+                    const a = document.createElement('a');
+                    a.href = download_url;
+                    a.download = `${patientId.value}.ppt`;  // Update with your desired file name
+                    document.body.appendChild(a);
+
+                    // Initiate the download
+                    a.click();
+
+                    // Clean up
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
     
                 } catch (error) {
                     console.error('Error fetching zigzag: ', error);
@@ -106,9 +121,9 @@ export default {
                 }
                 
             });
-            visitsSelected.value = selectedRowsArr
+            visitsSelected.value = selectedRowsArr;
 
-            console.log(visitsSelected.value)
+            console.log(visitsSelected.value);
         };
 
         const resizeHandler = () => { 
