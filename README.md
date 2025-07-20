@@ -21,9 +21,9 @@ It’s optimized for internal use at **UCI MIND**, and connects to a FastAPI bac
 - **Framework:** Vue.js (Vite-based)
 - **Languages:** JavaScript, CSS, HTML
 - **Build Tool:** Vite
-- **API Communication:** Axios or native `fetch`
-- 
-## 🔧 Setup & Development
+- **API Communication:** Axios
+
+## Setup & Development
 
 ### 1. Install dependencies
 ```bash
