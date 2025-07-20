@@ -1,29 +1,36 @@
-# UCI MIND ZigZag -project
+# UCI MIND ZigZag — Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+This is the **frontend interface** for the UCI MIND ZigZag project — a tool designed to generate standardized PowerPoint presentations for clinical and cognitive research. Built with **Vue.js**, it allows researchers to trigger generation of zig-zag formatted slides by interacting with the FastAPI backend.
 
-## Recommended IDE Setup
+---
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Overview
 
-## Customize configuration
+This single-page application (SPA) provides a simple UI for:
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- Selecting or searching patient records
+- Sending requests to generate PowerPoint slides
+- Displaying feedback on generation status and output
 
-## Project Setup
+It’s optimized for internal use at **UCI MIND**, and connects to a FastAPI backend that handles logic, MS SQL queries, and Visual Basic Script execution.
 
-```sh
+---
+
+## Tech Stack
+
+- **Framework:** Vue.js (Vite-based)
+- **Languages:** JavaScript, CSS, HTML
+- **Build Tool:** Vite
+- **API Communication:** Axios or native `fetch`
+- 
+## 🔧 Setup & Development
+
+### 1. Install dependencies
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
-
-```sh
+### 2. Run the development server
+```bash
 npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
 ```
